@@ -1,0 +1,47 @@
+
+services:
+  # Balanceador de carga
+  load_balancer:
+    build: ./nginx
+    ports:
+      - "80:80"
+    networks:
+      - my_network
+
+  # Servidor web 1
+  web1:
+    build: ./web_servers/web1
+    networks:
+      - my_network
+
+  # Servidor web 2
+  web2:
+    build: ./web_servers/web2
+    networks:
+      - my_network
+
+  # Prometheus
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    networks:
+      - my_network
+
+  # Grafana
+  grafana:
+    build: ./monitoring/grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning  # Configuración automática
+      - ./monitoring/grafana/dashboards:/etc/grafana/dashboards     # Paneles predefinidos
+    networks:
+      - my_network
+
+
+networks:
+  my_network:
+    driver: bridge
