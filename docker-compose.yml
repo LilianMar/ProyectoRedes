@@ -7,18 +7,33 @@ services:
       - "80:80"
     networks:
       - my_network
+          
 
-  # Servidor web 1
   web1:
     build: ./web_servers/web1
     networks:
       - my_network
+    ports:
+      - "8081:8080"  # Exponer web1 en el host en el puerto 8081
 
-  # Servidor web 2
   web2:
     build: ./web_servers/web2
     networks:
       - my_network
+    ports:
+      - "8082:8080"  # Exponer web2 en el host en el puerto 8082
+
+  
+  nginx_exporter:
+    image: nginx/nginx-prometheus-exporter
+    container_name: nginx_exporter
+    networks:
+      - my_network 
+    ports:
+      - "9113:9113"
+    environment:
+      - NGINX_SERVER=http://load_balancer/nginx_status  # Apunta al nombre del contenedor y no a localhost
+
 
   # Prometheus
   prometheus:
