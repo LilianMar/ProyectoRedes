@@ -1,13 +1,12 @@
-
 services:
   # Balanceador de carga
   load_balancer:
     build: ./nginx
     ports:
       - "80:80"
+      - "8080:8080"  # Exponer el puerto 8080 para stub_status
     networks:
       - my_network
-          
 
   web1:
     build: ./web_servers/web1
@@ -23,17 +22,15 @@ services:
     ports:
       - "8082:8080"  # Exponer web2 en el host en el puerto 8082
 
-  
   nginx_exporter:
     image: nginx/nginx-prometheus-exporter
     container_name: nginx_exporter
     networks:
-      - my_network 
+      - my_network
     ports:
       - "9113:9113"
-    environment:
-      - NGINX_SERVER=http://load_balancer/nginx_status  # Apunta al nombre del contenedor y no a localhost
-
+    command:
+      - "-nginx.scrape-uri=http://load_balancer:8080/stub_status"  # Apuntar al servicio load_balancer
 
   # Prometheus
   prometheus:
@@ -55,7 +52,6 @@ services:
       - ./monitoring/grafana/dashboards:/etc/grafana/dashboards     # Paneles predefinidos
     networks:
       - my_network
-
 
 networks:
   my_network:

@@ -1,5 +1,5 @@
 {
-   "id": null,
+  "id": null,
   "uid": "nginx-dashboard",
   "title": "Nginx Dashboard",  
   "tags": ["nginx"],
@@ -8,23 +8,111 @@
   "version": 0,
   "refresh": "5s",
   "panels": [
+   {
+     "type": "graph",
+     "title": "Requests per Server",
+     "targets": [
+       {
+         "expr": "sum by (instance) (rate(nginx_http_requests_total[1m]))",
+         "legendFormat": "{{instance}}",
+         "refId": "A"
+       }
+     ],
+     "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 }
+   },
+   {
+     "type": "graph",
+     "title": "Active Connections per Server",
+     "targets": [
+       {
+         "expr": "nginx_connections_active",
+         "legendFormat": "{{instance}}",
+         "refId": "B"
+       }
+     ],
+     "gridPos": { "x": 12, "y": 0, "w": 12, "h": 8 }
+   },
+   {
+     "type": "graph",
+     "title": "Handled Requests",
+     "targets": [
+       {
+         "expr": "increase(nginx_http_requests_total[5m])",
+         "legendFormat": "Requests in 5m",
+         "refId": "C"
+       }
+     ],
+     "gridPos": { "x": 0, "y": 8, "w": 12, "h": 8 }
+   },
+   {
+     "type": "graph",
+     "title": "Scrape Duration (Seconds)",
+     "targets": [
+       {
+         "expr": "avg(scrape_duration_seconds) by (instance)",
+         "legendFormat": "{{instance}}",
+         "refId": "D"
+       }
+     ],
+     "gridPos": { "x": 12, "y": 8, "w": 12, "h": 8 }
+   },
+   {
+    "type": "heatmap",
+    "title": "Request Traffic Density",
+    "targets": [
       {
-        "type": "graph",
-        "title": "Requests Per Second",
-        "targets": [
-          {
-            "expr": "rate(nginx_http_requests_total[1m])",  
-            "legendFormat": "Requests",
-            "refId": "A"
-          }
-        ],
-        "gridPos": {
-          "x": 0,
-          "y": 0,
-          "w": 24,
-          "h": 9
-        }
+        "expr": "rate(nginx_http_requests_total[1m])",
+        "legendFormat": "Requests",
+        "refId": "E"
       }
-    ]
+    ],
+    "options": {
+      "color": {
+        "mode": "spectrum",
+        "fill": "solid",
+        "cardColor": "white"
+      }
+    },
+    "gridPos": { "x": 0, "y": 16, "w": 24, "h": 8 }
+  },
+  
+   {
+     "type": "stat",
+     "title": "Load Balancer Status (nginx_up)",
+     "targets": [
+       {
+         "expr": "nginx_up",
+         "legendFormat": "Load Balancer Status",
+         "refId": "F"
+       }
+     ],
+     "gridPos": { "x": 12, "y": 16, "w": 12, "h": 4 }
+   },
+   {
+     "type": "stat",
+     "title": "Go Threads",
+     "targets": [
+       {
+         "expr": "go_threads",
+         "legendFormat": "Go Threads",
+         "refId": "G"
+       }
+     ],
+     "gridPos": { "x": 0, "y": 24, "w": 12, "h": 4 }
+   },
+   {
+    "type": "graph",
+    "title": "Requests Over Time",
+    "targets": [
+      {
+        "expr": "rate(nginx_http_requests_total[1m])",
+        "legendFormat": "Total Requests",
+        "refId": "B"
+      }
+    ],
+    "gridPos": { "x": 12, "y": 0, "w": 12, "h": 8 }
   }
+  
+ ],
+ "overwrite": false
 }
